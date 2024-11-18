@@ -1,0 +1,241 @@
+.home-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Adjust for centering */
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .home-container input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .home-container button {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .home-container button:hover {
+    background-color: #45a049;
+  }
+  
+  .home-container input::placeholder {
+    color: #888;
+    font-style: italic;
+  }
+
+
+/* General Styles */
+.room-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh; /* Full viewport height */
+    padding: 10px;
+  }
+  
+  h1 {
+    font-family: 'Roboto', sans-serif; /* Clean and modern font */
+    font-size: 1.5rem; /* Slightly larger for more prominence */
+    font-weight: 700; /* Bold weight for emphasis */
+    color: #34495e; /* Dark slate gray for the text */
+    text-align: center; /* Center-align text for symmetry */
+    margin: 10px 0; /* Ample spacing around the header */
+    padding: 5px; /* Padding for breathing space */
+    background: linear-gradient(45deg, #f39c12, #f1c40f); /* Gradients for dynamic look */
+    border-radius: 8px; /* Smooth rounded corners */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth and readability */
+    letter-spacing: 1.5px; /* Spacing out letters for modern, open look */
+    line-height: 1.3; /* Improved line height for better readability */
+    transition: transform 0.3s ease, color 0.3s ease, background 0.3s ease; /* Smooth transition for hover effects */
+  }
+  
+  h1:hover {
+    transform: translateY(-6px); /* Lift effect on hover */
+    color: #fff; /* Change text color on hover */
+    background: linear-gradient(45deg, #f1c40f, #f39c12); /* Reverse the gradient for hover */
+  }
+  
+  h1 span {
+    color: #e74c3c; /* Accent color for any highlighted text */
+    font-weight: 600; /* Make the span content a bit bolder */
+  }
+  
+  /* Video Container */
+  .video-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    height: 100%; /* Leave space for the title and button */
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Local Video */
+  .local-video {
+    width: 200px;
+    height: 150px;
+    background-color: #333;
+    position: absolute;
+    z-index: 10; /* Make sure it's above the remote video */
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .local-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    transform: scaleX(-1); /* Make sure the video is not mirrored */
+  }
+  
+  .local-video p {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  /* Remote Video */
+  .remote-video {
+    width: 100%;
+    height: 100%;
+    max-width: 90%; /* Ensure it's responsive */
+    background-color: #333;
+    position: relative;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .remote-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px #da92921a;
+    transform: scaleX(-1); /* Avoid mirror effect on the remote video */
+  }
+  
+  .remote-video p {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  /* Leave Button */
+  .leave-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .leave-button:hover {
+    background-color: darkred;
+  }
+  
+  /* Responsive Design for Mobile */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 1.3rem; /* Smaller font for mobile screens */
+      margin: 10px 0;
+    }
+  
+    .video-container {
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 15px;
+      height: calc(100% - 60px); /* Adjust for header and leave button */
+      overflow: visible;
+    }
+  
+    .local-video {
+      width: 150px; /* Reduce size of local video on small screens */
+      height: 112px;
+      position: absolute; /* Keep it absolute to float over remote video */
+      top: 10px; /* Position it at the top of the screen */
+    }
+  
+    .remote-video {
+      width: 100%;
+      height: auto; /* Allow remote video to scale properly */
+      max-width: 100%;
+    }
+  
+    .local-video video {
+      object-fit: cover;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .local-video {
+      width: 120px; /* Further reduce size on very small screens */
+      height: 90px;
+      top: 10px;
+    }
+  
+    .video-container {
+      gap: 10px; /* Smaller gap between the videos */
+    }
+  
+    .leave-button {
+      padding: 8px 15px; /* Smaller button for mobile */
+      font-size: 14px;
+    }
+  
+    h1 {
+      font-size: 1.2rem; /* Even smaller font for very small screens */
+      margin: 10px 0;
+    }
+  }
+  

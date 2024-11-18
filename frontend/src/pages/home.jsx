@@ -33,7 +33,7 @@ const Home=()=>{
       }
     },[socket])
     return (
-        <div>
+        <div className='home-container'>
             <input type='text' value={name} onChange={(e)=>{ setName(e.target.value)}} placeholder='Enter your full name ....'></input>
             <input type='email' value={email} onChange={(e)=>{setEmail(e.target.value)}} placeholder='Enter email ....'></input>
             <input type='text' value={roomId} onChange={(e)=>{setRoomId(e.target.value)}} placeholder='Enter your room Id ....'></input>

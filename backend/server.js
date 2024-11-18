@@ -7,13 +7,17 @@ const app = express();
 const port = 5000;
 
 // Enable CORS for both Express and Socket.IO
-app.use(cors());
+app.use(cors({
+  origin: 'https://8a55-2409-40e4-10a9-9b1b-a474-69f1-4c1c-f5a6.ngrok-free.app',
+  methods: ['GET', 'POST'],
+  credentials: true,
+}));
 
 // Body parser middleware for JSON requests
 app.use(bodyParser.json());
 
 // Create the HTTP server
-const server = app.listen(port, () => {
+const server = app.listen(port,'0.0.0.0', () => {
   console.log(`Express server listening on port ${port}`);
 });
 

@@ -5,12 +5,13 @@ const WebRTCContext = createContext(null);
 
 const configuration = {
   iceServers: [
-    { urls: "stun:stun.l.google.com:19302" },
+    { urls:[ "stun:stun.l.google.com:19302","stun:global.stun.twilio.com:3478",], },
     {
       urls: "turn:your-turn-server.com",
       username: "username",
       credential: "password",
     },
+    
   ],
 };
 

@@ -7,7 +7,7 @@ export const useSocket = () => {
 };
 
 const SocketProvider = (props) => {
-  const socket = useMemo(() => io("http://localhost:5000"), []);
+  const socket = useMemo(() => io("http://localhost:5001"), []);
 
 
   return (

@@ -4,11 +4,11 @@ const socketio = require('socket.io');
 const cors = require('cors');
 
 const app = express();
-const port = 5000;
+const port = 5001;
 
 // Enable CORS for both Express and Socket.IO
 app.use(cors({
-  origin: 'https://8a55-2409-40e4-10a9-9b1b-a474-69f1-4c1c-f5a6.ngrok-free.app',
+  origin: '*',
   methods: ['GET', 'POST'],
   credentials: true,
 }));

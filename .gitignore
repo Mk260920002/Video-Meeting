@@ -1,0 +1,27 @@
+# Dependencies (NEVER commit these)
+node_modules/
+**/node_modules/
+
+# Local Environment Secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+**/.env
+
+# Build Outputs (Cloudflare will generate its own)
+dist/
+build/
+.next/
+out/
+.cloudflare/
+.wrangler/
+
+# Logs and Debugging
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# OS Specific files
+.DS_Store
+Thumbs.db

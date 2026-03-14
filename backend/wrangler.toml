@@ -1,7 +1,0 @@
-name = "video-meet-backend"
-main = "server.js"
-compatibility_date = "2026-03-14"
-compatibility_flags = [ "nodejs_compat" ]
-
-[vars]
-NODE_ENV = "production"

@@ -7,7 +7,7 @@ export const useSocket = () => {
 };
 
 const SocketProvider = (props) => {
-  const socket = useMemo(() => io("http://localhost:5001"), []);
+  const socket = useMemo(() => io("https://video-meeting-backend-uqvj.onrender.com/"), []);
 
 
   return (

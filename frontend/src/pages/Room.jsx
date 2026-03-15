@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSocket } from "../context/socketContext";
 import { usePeer } from "../context/webrtc";
-import { useNavigate } from "react-router-dom";
+
 
 const Room = () => {
   const [dragging, setDragging] = useState(false);

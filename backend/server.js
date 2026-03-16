@@ -117,3 +117,20 @@ io.on('connection', (socket) => {
   });
   
 });
+// Add a simple health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send('Server is awake');
+});
+
+// Self-pinging logic to prevent spin-down
+const axios = require('axios');
+const SERVER_URL = 'https://video-meeting-backend-uqvj.onrender.com/health';
+
+setInterval(async () => {
+  try {
+    await axios.get(SERVER_URL);
+    console.log('Self-ping successful: Backend kept awake');
+  } catch (err) {
+    console.error('Self-ping failed:', err.message);
+  }
+}, 14 * 60 * 1000); 

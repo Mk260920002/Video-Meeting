@@ -23,32 +23,45 @@ const Room = () => {
   } = usePeer();
 
 const handleDragStart = (e) => {
-  // Prevent selecting text while dragging
-  e.preventDefault(); 
-  
-  isDragging.current = true;
-  
-  // Calculate the initial offset so the video doesn't "jump" to the mouse tip
-  const offsetX = e.clientX - position.x;
-  const offsetY = e.clientY - position.y;
+  // 1. Support both mouse and touch initial position
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-  const onMouseMove = (moveEvent) => {
+  isDragging.current = true;
+  setDragging(true);
+
+  const offsetX = clientX - position.x;
+  const offsetY = clientY - position.y;
+
+  const onMove = (moveEvent) => {
     if (isDragging.current) {
+      // 2. Support both mousemove and touchmove
+      const moveX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
+      const moveY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
+
       setPosition({
-        x: moveEvent.clientX - offsetX,
-        y: moveEvent.clientY - offsetY,
+        x: moveX - offsetX,
+        y: moveY - offsetY,
       });
     }
   };
 
-  const onMouseUp = () => {
+  const onEnd = () => {
     isDragging.current = false;
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
+    setDragging(false);
+    
+    // Cleanup both types of listeners
+    document.removeEventListener("mousemove", onMove);
+    document.removeEventListener("mouseup", onEnd);
+    document.removeEventListener("touchmove", onMove);
+    document.removeEventListener("touchend", onEnd);
   };
 
-  document.addEventListener("mousemove", onMouseMove);
-  document.addEventListener("mouseup", onMouseUp);
+  // Add listeners for both Desktop and Mobile
+  document.addEventListener("mousemove", onMove);
+  document.addEventListener("mouseup", onEnd);
+  document.addEventListener("touchmove", onMove, { passive: false });
+  document.addEventListener("touchend", onEnd);
 };
 
   const HandleRoomLeave = () => {
@@ -99,9 +112,11 @@ const handleDragStart = (e) => {
                 position: "absolute",
                 cursor: dragging ? "grabbing" : "grab", // Visual cue for the user
                 zIndex: 100, // Ensure it stays on top of the remote video
-                userSelect: "none" // Prevents text highlighting during drag
+                userSelect: "none", // Prevents text highlighting during drag
+                touchAction: "none"
               }}
               onMouseDown={handleDragStart}
+              onTouchStart={handleDragStart}
             >
               <video
                 autoPlay

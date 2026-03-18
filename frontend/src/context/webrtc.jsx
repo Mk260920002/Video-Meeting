@@ -19,10 +19,43 @@ const configuration = {
 export const usePeer = () => React.useContext(WebRTCContext);
 
 export const PeerProvider = (props) => {
+  const [isFrontCamera, setIsFrontCamera] = useState(true);
   const [localStream, setLocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
+  const [canFlip, setCanFlip] = useState(false);
   const { socket } = useSocket();
+
+ const switchCamera = async () => {
+  try {
+    const newFacingMode = isFrontCamera ? 'environment' : 'user';
+    const newStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: newFacingMode }, 
+      audio: true,
+    });
+
+    if (newStream) {
+      // 1. Stop old tracks ONLY after getting the new ones successfully
+      localStream.getTracks().forEach(track => track.stop());
+
+      // 2. Update states
+      setLocalStream(newStream);
+      localStreamRef.current = newStream;
+      setIsFrontCamera(!isFrontCamera);
+
+      // 3. Update peer connection
+      if (peerConnection) {
+        const videoTrack = newStream.getVideoTracks()[0];
+        const sender = peerConnection.getSenders().find(s => s.track?.kind === "video");
+        if (sender) await sender.replaceTrack(videoTrack);
+      }
+    }
+  } catch (error) {
+    console.error("Camera switch failed, keeping current stream:", error);
+    // Alert user that flip isn't possible on this hardware
+  }
+};
+
   const localStreamRef = useRef(null);
   // Setup local stream
   const setupLocalStream = async () => {
@@ -175,6 +208,16 @@ export const PeerProvider = (props) => {
     };
   }, [socket, peerConnection]);
 
+  useEffect(() => {
+  const checkCameras = async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoInputs = devices.filter(device => device.kind === 'videoinput');
+    // Only allow flipping if there's more than one camera
+    setCanFlip(videoInputs.length > 1);
+  };
+  checkCameras();
+}, []);
+
   return (
     <WebRTCContext.Provider
       value={{
@@ -185,7 +228,9 @@ export const PeerProvider = (props) => {
         setRemoteStream,
         peerConnection,
         setPeerConnection,
-        handleNewUser
+        handleNewUser,
+        switchCamera,
+        canFlip
       }}
     >
       {props.children}

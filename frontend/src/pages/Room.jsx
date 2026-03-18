@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useSocket } from "../context/socketContext";
 import { usePeer } from "../context/webrtc";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCameraRotate } from '@fortawesome/free-solid-svg-icons';
 
 const Room = () => {
   const [dragging, setDragging] = useState(false);
@@ -20,6 +21,8 @@ const Room = () => {
     handleNewUser,
     peerConnection,
     setPeerConnection,
+    switchCamera,
+    canFlip
   } = usePeer();
 
 const handleDragStart = (e) => {
@@ -131,6 +134,27 @@ const handleDragStart = (e) => {
                   }
                 }}
               />
+           {canFlip && (<button 
+              className="flip-icon-btn" 
+              onClick={(e) => {
+                e.stopPropagation(); // Prevents triggering drag when clicking the button
+                switchCamera();
+              }}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                zIndex: 101, // Ensure it sits above the video
+                background: "rgba(0,0,0,0.5)",
+                border: "none",
+                borderRadius: "50%",
+                padding: "8px",
+                color: "white"
+              }}
+            >
+              <FontAwesomeIcon icon={faCameraRotate} />
+            </button>)
+            }
               <p>Your Video</p>
             </div>
           )}

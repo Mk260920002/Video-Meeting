@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useSocket } from "../context/socketContext";
 import { usePeer } from "../context/webrtc";
@@ -6,6 +6,7 @@ import { usePeer } from "../context/webrtc";
 
 const Room = () => {
   const [dragging, setDragging] = useState(false);
+  const isDragging = useRef(false);
   const [position, setPosition] = useState({ x: 20, y: 20 });
   const { roomId } = useParams();
   const { socket } = useSocket();
@@ -21,29 +22,34 @@ const Room = () => {
     setPeerConnection,
   } = usePeer();
 
-  const handleDragStart = (e) => {
-    setDragging(true);
-    const offsetX = e.clientX - position.x;
-    const offsetY = e.clientY - position.y;
+const handleDragStart = (e) => {
+  // Prevent selecting text while dragging
+  e.preventDefault(); 
+  
+  isDragging.current = true;
+  
+  // Calculate the initial offset so the video doesn't "jump" to the mouse tip
+  const offsetX = e.clientX - position.x;
+  const offsetY = e.clientY - position.y;
 
-    const onMouseMove = (moveEvent) => {
-      if (dragging) {
-        setPosition({
-          x: moveEvent.clientX - offsetX,
-          y: moveEvent.clientY - offsetY,
-        });
-      }
-    };
-
-    const onMouseUp = () => {
-      setDragging(false);
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
-
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
+  const onMouseMove = (moveEvent) => {
+    if (isDragging.current) {
+      setPosition({
+        x: moveEvent.clientX - offsetX,
+        y: moveEvent.clientY - offsetY,
+      });
+    }
   };
+
+  const onMouseUp = () => {
+    isDragging.current = false;
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+  };
+
+  document.addEventListener("mousemove", onMouseMove);
+  document.addEventListener("mouseup", onMouseUp);
+};
 
   const HandleRoomLeave = () => {
     socket.emit("user-leave", { id: socket.id });
@@ -84,33 +90,35 @@ const Room = () => {
     <div className="room-container">
       <h1>Welcome to <span>Room {roomId}</span></h1>
       <div className="video-container">
-        {localStream && (
-          <div
-            className="local-video"
-            style={{
-              left: `${position.x}px`,
-              top: `${position.y}px`,
-              position: "absolute", // Make video draggable
-            }}
-            onMouseDown={handleDragStart}
-          >
-            <video
-              autoPlay
-              playsInline
-              ref={(video) => {
-                if (video) {
-                  const mutedStream = new MediaStream();
-                  localStream
-                    .getVideoTracks()
-                    .forEach((track) => mutedStream.addTrack(track));
-                  video.srcObject = mutedStream;
-               
-                }
+          {localStream && (
+            <div
+              className="local-video"
+              style={{
+                left: `${position.x}px`,
+                top: `${position.y}px`,
+                position: "absolute",
+                cursor: dragging ? "grabbing" : "grab", // Visual cue for the user
+                zIndex: 100, // Ensure it stays on top of the remote video
+                userSelect: "none" // Prevents text highlighting during drag
               }}
-            />
-            <p>Your Video</p>
-          </div>
-        )}
+              onMouseDown={handleDragStart}
+            >
+              <video
+                autoPlay
+                playsInline
+                ref={(video) => {
+                  if (video && !video.srcObject) { // Optimization: don't reset if already set
+                    const mutedStream = new MediaStream();
+                    localStream
+                      .getVideoTracks()
+                      .forEach((track) => mutedStream.addTrack(track));
+                    video.srcObject = mutedStream;
+                  }
+                }}
+              />
+              <p>Your Video</p>
+            </div>
+          )}
 
         {remoteStream ? (
           <div className="remote-video">

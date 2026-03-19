@@ -68,6 +68,11 @@ export const PeerProvider = (props) => {
       await setLocalStream(stream); // Updates React state
       localStreamRef.current = stream; // Updates ref immediately
       console.log("Local stream initialized:", stream);
+    
+      // CHECK FOR CAMERAS HERE after permission is granted
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoInputs = devices.filter(device => device.kind === 'videoinput');
+    setCanFlip(videoInputs.length > 1);
     } catch (error) {
       console.error("Error accessing media devices:", error);
     }
@@ -208,15 +213,6 @@ export const PeerProvider = (props) => {
     };
   }, [socket, peerConnection]);
 
-  useEffect(() => {
-  const checkCameras = async () => {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoInputs = devices.filter(device => device.kind === 'videoinput');
-    // Only allow flipping if there's more than one camera
-    setCanFlip(videoInputs.length > 1);
-  };
-  checkCameras();
-}, []);
 
   return (
     <WebRTCContext.Provider

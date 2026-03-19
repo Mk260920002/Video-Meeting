@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCameraRotate } from '@fortawesome/free-solid-svg-icons';
 
 const Room = () => {
+  const localVideoRef = useRef(null);
   const [dragging, setDragging] = useState(false);
   const isDragging = useRef(false);
   const [position, setPosition] = useState({ x: 20, y: 20 });
@@ -71,12 +72,23 @@ const handleDragStart = (e) => {
     socket.emit("user-leave", { id: socket.id });
     window.location.href = "/";
   };
+  
+  useEffect(() => {
+  if (localVideoRef.current && localStream) {
+    // We create the muted stream to avoid audio feedback locally
+    const mutedStream = new MediaStream();
+    localStream.getVideoTracks().forEach((track) => mutedStream.addTrack(track));
+    
+    localVideoRef.current.srcObject = mutedStream;
+  }
+}, [localStream]); // This runs every time the camera flips!
+
 
   const HandleNewUserJoined = (data) => {
     console.log("user-joined", data);
     handleNewUser();
   };
-
+  
   useEffect(() => {
     const setup = async () => {
       console.log("Setting up local stream...");
@@ -121,7 +133,7 @@ const handleDragStart = (e) => {
               onMouseDown={handleDragStart}
               onTouchStart={handleDragStart}
             >
-              <video
+              {/* <video
                 autoPlay
                 playsInline
                 ref={(video) => {
@@ -133,7 +145,13 @@ const handleDragStart = (e) => {
                     video.srcObject = mutedStream;
                   }
                 }}
-              />
+              /> */}
+              <video
+                  autoPlay
+                  playsInline
+                  ref={localVideoRef} // Use the permanent ref here
+                />
+                
            {canFlip && (<button 
               className="flip-icon-btn" 
               onClick={(e) => {

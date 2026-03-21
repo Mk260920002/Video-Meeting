@@ -20,23 +20,39 @@ const LocalVideo = ({ localStream, canFlip, switchCamera }) => {
   const handleDragStart = (e) => {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
     isDragging.current = true;
     setDragging(true);
 
     const offsetX = clientX - position.x;
     const offsetY = clientY - position.y;
 
+    // We use a ref to store the "ID" of the animation frame so we can cancel it if needed
+    let animationFrameId = null;
+
     const onMove = (moveEvent) => {
       if (isDragging.current) {
         const moveX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
         const moveY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
-        setPosition({ x: moveX - offsetX, y: moveY - offsetY });
+
+        // Cancel any pending frame to avoid "backlog"
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+        // Schedule the update for the next browser paint
+        animationFrameId = requestAnimationFrame(() => {
+          setPosition({ 
+            x: moveX - offsetX, 
+            y: moveY - offsetY 
+          });
+        });
       }
     };
 
     const onEnd = () => {
       isDragging.current = false;
       setDragging(false);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onEnd);
       document.removeEventListener("touchmove", onMove);
@@ -48,7 +64,6 @@ const LocalVideo = ({ localStream, canFlip, switchCamera }) => {
     document.addEventListener("touchmove", onMove, { passive: false });
     document.addEventListener("touchend", onEnd);
   };
-
   return (
     <div
       className="local-video"

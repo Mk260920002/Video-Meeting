@@ -111,6 +111,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    will-change: left, top; 
+    transition: transform 0.05s linear;
   }
   
   .local-video video {
